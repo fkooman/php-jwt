@@ -36,10 +36,10 @@ supporting every nook and cranny of the specification.
 
 # Versions
 
-| Version | PHP    | OS                  |
-|---------|--------|---------------------|
-| 1.0     | >= 5.4 | CentOS 7, Debian 9  |
-| 2.0     | >= 7.2 | CentOS 8, Debian 10 |
+| Version | PHP    | OS                                |
+|---------|--------|-----------------------------------|
+| 1.x     | >= 5.4 | CentOS >= 7 (+EPEL), Debian >= 9  |
+| 2.x     | >= 7.2 | CentOS >= 8 (+EPEL), Debian >= 10 |
 
 # Requirements
 
