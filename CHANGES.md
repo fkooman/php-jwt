@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 1.0.1 (...)
+- switch to `paragonie/sodium_compat` for Composer installations
+
 ## 1.0.0 (2019-03-06)
 - remove redundant type checks
 - update README
