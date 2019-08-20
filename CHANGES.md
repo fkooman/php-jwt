@@ -1,7 +1,8 @@
 # ChangeLog
 
-## 1.0.1 (...)
+## 1.0.1 (2019-08-20)
 - switch to `paragonie/sodium_compat` for Composer installations
+- add benchmarks for signature validation
 
 ## 1.0.0 (2019-03-06)
 - remove redundant type checks
