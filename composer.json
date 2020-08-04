@@ -15,7 +15,7 @@
             "fkooman\\Jwt\\Tests\\": "tests/"
         }
     },
-    "description": "Simple and Secure JWT Signer/Verifier",
+    "description": "Small JSON Web Signature implementation",
     "license": "MIT",
     "name": "fkooman/jwt",
     "require": {
