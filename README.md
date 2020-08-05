@@ -3,6 +3,8 @@
 **Description**: Small and secure JSON Web Signature implementation written in
 PHP. It only supports HS256, RS256 and EdDSA.
 
+**License**: MIT
+
 # Introduction
 
 This is small JSON Web Token implementation. It only supports signatures with 
