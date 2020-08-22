@@ -79,13 +79,12 @@ abstract class Jwt
     public function decode($jwtStr)
     {
         $jwtParts = self::parseToken($jwtStr);
+        // we do NOT need to parse the header in order to verify the signature
         if (false === $this->verify($jwtParts[0].'.'.$jwtParts[1], Base64UrlSafe::decode($jwtParts[2]))) {
             throw new JwtException('invalid signature');
         }
 
-        // as we do not need any information from the header BEFORE checking
-        // the signature, we only verify it AFTER checking the signature.
-        // --> verify signature before parsing best-practice.
+        // check the header contents AFTER the signature verification...
         $headerData = Json::decode(Base64UrlSafe::decode($jwtParts[0]));
         $this->checkHeader($headerData);
 
@@ -156,15 +155,15 @@ abstract class Jwt
      *
      * @return void
      */
-    private function checkHeader(array $jwtHeaderData)
+    private function checkHeader(array $headerData)
     {
-        if (!\array_key_exists('alg', $jwtHeaderData)) {
+        if (!\array_key_exists('alg', $headerData)) {
             throw new JwtException('"alg" header key missing');
         }
-        if ($this->getAlgorithm() !== $jwtHeaderData['alg']) {
+        if ($this->getAlgorithm() !== $headerData['alg']) {
             throw new JwtException('unexpected "alg" value');
         }
-        if (\array_key_exists('crit', $jwtHeaderData)) {
+        if (\array_key_exists('crit', $headerData)) {
             throw new JwtException('"crit" header key not supported');
         }
     }
