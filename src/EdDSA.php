@@ -30,9 +30,6 @@ use fkooman\Jwt\Keys\EdDSA\SecretKey;
 
 class EdDSA extends Jwt
 {
-    /** @var string */
-    const JWT_ALGORITHM = 'EdDSA';
-
     /** @var Keys\EdDSA\PublicKey */
     private $publicKey;
 
@@ -47,6 +44,14 @@ class EdDSA extends Jwt
     {
         $this->publicKey = $publicKey;
         $this->secretKey = $secretKey;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getAlgorithm()
+    {
+        return 'EdDSA';
     }
 
     /**

@@ -1,5 +1,14 @@
 # ChangeLog
 
+## 1.1.0 (...)
+- make static code analyzers happy
+- move header check until after the signature has been verified
+- remove public `Jwt::setDateTime()`, was only used for testing and nobody was
+  supposed to use it anyway, if they do/did that is a security issue, and their
+  code MUST break
+- actual algorithm classes have now a `getAlgorithm()` method exposing the
+  JWT algorithm instead of a `const`
+
 ## 1.0.1 (2019-08-20)
 - switch to `paragonie/sodium_compat` for Composer installations
 - add benchmarks for signature validation

@@ -29,8 +29,6 @@ use fkooman\Jwt\Exception\JsonException;
 class Json
 {
     /**
-     * @param array $jsonData
-     *
      * @return string
      */
     public static function encode(array $jsonData)
@@ -38,12 +36,7 @@ class Json
         $jsonString = \json_encode($jsonData);
         // 5.5.0 	The return value on failure was changed from null string to FALSE.
         if (false === $jsonString || 'null' === $jsonString) {
-            throw new JsonException(
-                \sprintf(
-                    'unable to encode JSON, error code "%d"',
-                    \json_last_error()
-                )
-            );
+            throw new JsonException(\sprintf('unable to encode JSON, error code "%d"', \json_last_error()));
         }
 
         return $jsonString;
@@ -59,12 +52,7 @@ class Json
         /** @psalm-suppress MixedAssignment */
         $jsonData = \json_decode($jsonString, true);
         if (null === $jsonData && JSON_ERROR_NONE !== \json_last_error()) {
-            throw new JsonException(
-                \sprintf(
-                    'unable to decode JSON, error code "%d"',
-                    \json_last_error()
-                )
-            );
+            throw new JsonException(\sprintf('unable to decode JSON, error code "%d"', \json_last_error()));
         }
 
         if (!\is_array($jsonData)) {

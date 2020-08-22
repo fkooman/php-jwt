@@ -31,9 +31,6 @@ use RuntimeException;
 
 class RS256 extends Jwt
 {
-    /** @var string */
-    const JWT_ALGORITHM = 'RS256';
-
     /** @var Keys\RS256\PublicKey */
     private $publicKey;
 
@@ -48,6 +45,14 @@ class RS256 extends Jwt
     {
         $this->publicKey = $publicKey;
         $this->privateKey = $privateKey;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getAlgorithm()
+    {
+        return 'RS256';
     }
 
     /**

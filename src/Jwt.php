@@ -41,19 +41,6 @@ abstract class Jwt
     protected $keyId = null;
 
     /**
-     * Override the "DateTime" for unit testing. Do NOT use this in your
-     * application.
-     *
-     * @param \DateTime $dateTime
-     *
-     * @return void
-     */
-    public function setDateTime(DateTime $dateTime)
-    {
-        $this->dateTime = $dateTime;
-    }
-
-    /**
      * @param string $keyId
      *
      * @return void
@@ -64,14 +51,12 @@ abstract class Jwt
     }
 
     /**
-     * @param array $jsonData
-     *
      * @return string
      */
     public function encode(array $jsonData)
     {
         $headerData = [
-            'alg' => static::JWT_ALGORITHM,
+            'alg' => $this->getAlgorithm(),
             'typ' => 'JWT',
         ];
 
@@ -94,10 +79,17 @@ abstract class Jwt
     public function decode($jwtStr)
     {
         $jwtParts = self::parseToken($jwtStr);
-        self::validateHeader($jwtParts[0]);
         if (false === $this->verify($jwtParts[0].'.'.$jwtParts[1], Base64UrlSafe::decode($jwtParts[2]))) {
             throw new JwtException('invalid signature');
         }
+
+        // as we do not need any information from the header BEFORE checking
+        // the signature, we only verify it AFTER checking the signature.
+        // --> verify signature before parsing best-practice.
+        $headerData = Json::decode(Base64UrlSafe::decode($jwtParts[0]));
+        $this->checkHeader($headerData);
+
+        // verify payload
         $payloadData = Json::decode(Base64UrlSafe::decode($jwtParts[1]));
         $this->checkToken($payloadData);
 
@@ -112,7 +104,7 @@ abstract class Jwt
     public static function extractKeyId($jwtStr)
     {
         $jwtParts = self::parseToken($jwtStr);
-        $jwtHeaderData = self::validateHeader($jwtParts[0]);
+        $jwtHeaderData = Json::decode(Base64UrlSafe::decode($jwtParts[0]));
         if (!\array_key_exists('kid', $jwtHeaderData)) {
             return null;
         }
@@ -122,6 +114,11 @@ abstract class Jwt
 
         return $jwtHeaderData['kid'];
     }
+
+    /**
+     * @return string
+     */
+    abstract protected function getAlgorithm();
 
     /**
      * @param string $inputStr
@@ -154,36 +151,38 @@ abstract class Jwt
     }
 
     /**
-     * @param string $jwtHeaderStr
+     * Make sure we have an "alg" with the correct value and that "crit" is
+     * not set.
      *
-     * @return array
+     * @param array<mixed> $headerData
+     *
+     * @return void
      */
-    private static function validateHeader($jwtHeaderStr)
+    private function checkHeader(array $headerData)
     {
-        $jwtHeaderData = Json::decode(Base64UrlSafe::decode($jwtHeaderStr));
-        if (!\array_key_exists('alg', $jwtHeaderData)) {
+        if (!\array_key_exists('alg', $headerData)) {
             throw new JwtException('"alg" header key missing');
         }
-        if (static::JWT_ALGORITHM !== $jwtHeaderData['alg']) {
+        if ($this->getAlgorithm() !== $headerData['alg']) {
             throw new JwtException('unexpected "alg" value');
         }
-        if (\array_key_exists('crit', $jwtHeaderData)) {
+        if (\array_key_exists('crit', $headerData)) {
             throw new JwtException('"crit" header key not supported');
         }
-
-        return $jwtHeaderData;
     }
 
     /**
      * Verify the "exp" and "nbf" keys iff they are set.
      *
-     * @param array $payloadData
+     * @param array<mixed> $payloadData
      *
      * @return void
      */
     private function checkToken(array $payloadData)
     {
-        $dateTime = null !== $this->dateTime ? $this->dateTime : new DateTime();
+        if (null === $dateTime = $this->dateTime) {
+            $dateTime = new DateTime();
+        }
 
         // exp
         if (\array_key_exists('exp', $payloadData)) {

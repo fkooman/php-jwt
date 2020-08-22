@@ -22,49 +22,21 @@
  * SOFTWARE.
  */
 
-namespace fkooman\Jwt;
+namespace fkooman\Jwt\Tests;
 
-use fkooman\Jwt\Keys\HS256\SecretKey;
+use DateTime;
+use fkooman\Jwt\Keys\RS256\PublicKey;
+use fkooman\Jwt\RS256;
 
-class HS256 extends Jwt
+/*
+ * We have a TestRS256 in order to override DateTime for not failing on expired
+ * tokens.
+ */
+class TestRS256 extends RS256
 {
-    /** @var Keys\HS256\SecretKey */
-    private $secretKey;
-
-    /**
-     * @param Keys\HS256\SecretKey $secretKey
-     */
-    public function __construct(SecretKey $secretKey)
+    public function __construct(PublicKey $publicKey, DateTime $dateTime)
     {
-        $this->secretKey = $secretKey;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getAlgorithm()
-    {
-        return 'HS256';
-    }
-
-    /**
-     * @param string $inputStr
-     *
-     * @return string
-     */
-    protected function sign($inputStr)
-    {
-        return \hash_hmac('sha256', $inputStr, $this->secretKey->raw(), true);
-    }
-
-    /**
-     * @param string $inputStr
-     * @param string $signatureIn
-     *
-     * @return bool
-     */
-    protected function verify($inputStr, $signatureIn)
-    {
-        return \hash_equals(self::sign($inputStr), $signatureIn);
+        parent::__construct($publicKey);
+        $this->dateTime = $dateTime;
     }
 }
