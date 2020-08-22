@@ -1,6 +1,6 @@
 # ChangeLog
 
-## 1.1.0 (...)
+## 1.1.0 (2020-08-22)
 - make static code analyzers happy
 - move header check until after the signature has been verified
 - remove public `Jwt::setDateTime()`, was only used for testing and nobody was
