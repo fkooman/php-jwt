@@ -154,27 +154,23 @@ abstract class Jwt
      * Make sure we have an "alg" with the correct value and that "crit" is
      * not set.
      *
-     * @param array<mixed> $headerData
-     *
      * @return void
      */
-    private function checkHeader(array $headerData)
+    private function checkHeader(array $jwtHeaderData)
     {
-        if (!\array_key_exists('alg', $headerData)) {
+        if (!\array_key_exists('alg', $jwtHeaderData)) {
             throw new JwtException('"alg" header key missing');
         }
-        if ($this->getAlgorithm() !== $headerData['alg']) {
+        if ($this->getAlgorithm() !== $jwtHeaderData['alg']) {
             throw new JwtException('unexpected "alg" value');
         }
-        if (\array_key_exists('crit', $headerData)) {
+        if (\array_key_exists('crit', $jwtHeaderData)) {
             throw new JwtException('"crit" header key not supported');
         }
     }
 
     /**
      * Verify the "exp" and "nbf" keys iff they are set.
-     *
-     * @param array<mixed> $payloadData
      *
      * @return void
      */
