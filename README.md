@@ -31,7 +31,8 @@ supporting every nook and cranny of the specification.
 # How?
 
 * Only supports `RS256`, `HS256` and `EdDSA` through separate classes, the 
-  header is _NOT_ used to determine the algorithm when verifying signatures;
+  header is _NOT_ used to determine the algorithm when verifying signatures, 
+  actually, the header is only inspected *after* verifying the signature;
 * All keys are validated before use and wrapped in "Key" objects to make sure 
   they are of the correct format. Helper methods are provided to load / save / 
   generate keys;
@@ -41,23 +42,14 @@ supporting every nook and cranny of the specification.
 * Verifies the `exp` and `nbf` payload field if present to make sure the token 
   is already and still valid.
 
-# Versions
-
-| Version | PHP    | OS                                |
-|---------|--------|-----------------------------------|
-| 1.x     | >= 5.4 | CentOS >= 7 (+EPEL), Debian >= 9  |
-| 2.x     | >= 7.2 | CentOS >= 8 (+EPEL), Debian >= 10 |
-
 # Requirements
 
 * PHP >= 5.4.8 
 * `php-hash` (for `HS256`)
 * `php-openssl` (for `RS256`)
-* `php-pecl-libsodium` with PHP < 7.2 or `php-sodium` with PHP >= 7.2 
-  (for `EdDSA`)
 
-On modern PHP versions only `paragonie/constant_time_encoding` is a dependency,
-on older versions some polyfills are used. See `composer.json`.
+Installing `php-sodium` (PHP >= 7.2) or `php-libsodium` packages, (PHP < 7.2) 
+are highly recommended when using `EdDSA`.
 
 ## Use
 
@@ -78,7 +70,7 @@ be added in the future. In your `composer.json`:
     },
 
 You can also download the signed source code archive 
-[here](https://software.tuxed.net/php-jwt/download.html).
+[here](https://src.tuxed.net/php-jwt/).
 
 # Keys
 
@@ -90,15 +82,16 @@ any other way unless you know what you are doing!
 Use the `openssl` command line to generate they public and private key:
 
 ```bash
-$ openssl genrsa --out rsa.key 2048
+$ openssl genrsa --out rsa.key 3072
 $ openssl rsa -in rsa.key -pubout -out rsa.pub
 ```
 
 The RSA key MUST have 
-[at least](https://tools.ietf.org/html/rfc7518#section-4.2) 2048 bits. The 
-above command will generate a private key in `rsa.key` and the public key in 
-`rsa.pub`. Those files can be used with the `PublicKey` and `PrivateKey` key 
-wrapping classes.
+[at least](https://tools.ietf.org/html/rfc7518#section-4.2) 2048 bits. It is 
+highly recommended to use at least 3072 when you plan to use the same key for
+the next couple of years. The above command will generate a private key in 
+`rsa.key` and the public key in `rsa.pub`. Those files can be used with the 
+`PublicKey` and `PrivateKey` key wrapping classes.
 
 To inspect a public key:
 
